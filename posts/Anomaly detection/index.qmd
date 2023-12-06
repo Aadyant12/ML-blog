@@ -1,8 +1,8 @@
 ---
-title: "Regression"
+title: "Anomaly Detection"
 author: "Aadyant Khatri"
 date: "2023-12-05"
-categories: [classification, code, analysis, ML]
+categories: [outlier detection, code, analysis, ML]
 image: "image.jpeg"
 ---
 
@@ -53,4 +53,98 @@ A boxplot illustrates a quantitative variable by presenting five typical summary
 
 Data points identified as potential outliers based on the IQR rule are represented as individual points in the boxplot. According to this criterion, there are two potential outliers, which are visible as the two points positioned above the upper end of the boxplot.
 
+It is also possible to extract the values of the potential outliers based on the IQR criterion thanks to the boxplot.stats()$out function:
 
+```{r}
+boxplot.stats(dat$hwy)$out
+
+```
+
+With the use of the `which()` function, it becomes feasible to retrieve the row number that corresponds to these exceptional values. Now armed with this information, you can readily revisit particular rows within the dataset to confirm them or display all variables related to these outliers.
+```{r}
+out <- boxplot.stats(dat$hwy)$out
+out_ind <- which(dat$hwy %in% c(out))
+dat[out_ind, ]
+```
+
+### Percentiles
+
+This outlier detection technique relies on using percentiles. Employing this method involves identifying potential outliers by considering all data points lying outside the range established by the 2.5th and 97.5th percentiles.
+
+Alternatively, different percentile ranges, like the 1st and 99th, or the 5th and 95th, can also be utilized to create the range for outlier detection.
+
+To compute the values for the lower and upper percentiles (and consequently establish the boundaries of the range), the `quantile()` function can be employed.
+
+```{r}
+lower_bound <- quantile(dat$hwy, 0.025)
+lower_bound
+
+upper_bound <- quantile(dat$hwy, 0.975)
+upper_bound
+```
+
+Based on this approach, any observations lower than 14 or higher than 35.175 will be regarded as potential outliers.
+
+All variables considered as outliers with this method are as below:
+```{r}
+outlier_ind <- which(dat$hwy < lower_bound | dat$hwy > upper_bound)
+dat[outlier_ind, ]
+```
+According to the percentiles technique, there are 11 possible anomalies.
+
+To decrease this count, you have the option to adjust the percentiles to 1 and 99.
+```{r}
+lower_bound <- quantile(dat$hwy, 0.01)
+upper_bound <- quantile(dat$hwy, 0.99)
+
+outlier_ind <- which(dat$hwy < lower_bound | dat$hwy > upper_bound)
+
+dat[outlier_ind, ]
+```
+
+### Grubbs’s test
+The Grubbs test identifies whether the extreme values in a dataset, either the highest or lowest, are outliers.
+
+The Grubbs test examines outliers individually, focusing on one extreme value (either the highest or lowest) at a time. Therefore, the null hypothesis suggests that the highest value is not considered an outlier, while the alternative hypothesis proposes that the highest value is indeed an outlier.
+
+For any statistical test, when the p-value falls below the selected significance threshold (usually α = 0.05), we reject the null hypothesis and infer that the lowest/highest value represents an outlier.
+
+Conversely, if the p-value is equal to or greater than the significance level, we do not reject the null hypothesis. In this case, we conclude that, based on the data, there's insufficient evidence to reject the idea that the lowest/highest value is not an outlier.
+
+```{r}
+library(outliers)
+test <- grubbs.test(dat$hwy)
+test
+```
+The p-value of 0.056 suggests that, at a 5% significance level, we fail to reject the hypothesis indicating that the highest value of 44 might not be considered an outlier.
+
+### Dixon’s test
+
+Like the Grubb's test, the Dixon test is utilized to determine if a particular low or high value is an outlier. If there are suspicions of multiple outliers, this test needs to be conducted separately on each suspected outlier.
+
+The Dixon test is particularly beneficial when dealing with limited sample sizes, typically when `n` is equal to or less than 25.
+
+```{r}
+subdat <- dat[1:20, ]
+test <- dixon.test(subdat$hwy)
+test
+```
+The findings indicate that the smallest figure, 15, stands out as an outlier (with a p-value of 0.007).
+
+### Machine Learning Approaches
+
+Machine learning algorithms offer a diverse toolkit for anomaly detection due to their ability to comprehend complex patterns within datasets. Several specific algorithms, such as clustering, isolation forests, one-class SVM (Support Vector Machine), and neural networks, showcase proficiency in identifying anomalies by learning from the inherent structures and characteristics of the data.
+
+#### Clustering Algorithms
+Clustering algorithms, such as K-means or DBSCAN, group similar data points together based on certain similarity metrics. Anomalies are often isolated as data points that don’t fit into any distinct cluster or form clusters of their own, highlighting their dissimilarity from the majority of the data.
+
+#### One-Class SVM (Support Vector Machine)
+One-class SVM is specifically designed for anomaly detection by learning the patterns of normal data instances. It constructs a boundary around the normal data points in a high-dimensional space, effectively identifying anomalies as instances lying outside this boundary.
+
+#### Neural Networks
+Neural networks, particularly deep learning models, possess the capability to detect anomalies by learning intricate data representations. Autoencoders, a type of neural network architecture, are commonly used for anomaly detection. They reconstruct input data and pinpoint anomalies by their inability to accurately reconstruct, highlighting deviations from learned patterns.
+
+## Conclusion
+Anomaly and outlier detection play a pivotal role in data analysis across diverse domains. By leveraging statistical, machine learning, and visualization techniques, analysts can uncover hidden insights, potential errors, or significant events within datasets.
+
+Understanding the context and domain-specific knowledge are essential in defining anomalies and selecting suitable detection methods. Robust anomaly detection not only aids in identifying issues but also reveals valuable insights that might lead to improved decision-making, anomaly prevention, and enhanced overall data quality. Mastering anomaly detection techniques empowers analysts to extract meaningful information and glean deeper insights from their data, fostering more informed actions across various industries and disciplines.

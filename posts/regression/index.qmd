@@ -82,7 +82,7 @@ y <- x^3 - 2 * x^2 + x + 2 + rnorm(10, 0, 10)
 df <- data.frame(x, y)
 df
 ```
-On fitting a linear model we get, 
+On fitting both polynomial (degree = 3) and linear models we can see that the former performs much better. 
 ```{r setup, warning=FALSE}
 fit <- lm(y ~ x, data = df)
 df |> ggplot(aes(x, y)) +
@@ -92,4 +92,15 @@ df |> ggplot(aes(x, y)) +
 
 ```
 
+# Conclusion
+
+Certainly! Here's a slightly expanded conclusion:
+
+In summary, linear regression excels in capturing straightforward relationships between variables, offering simplicity and interpretability. Meanwhile, non-linear regression shines when dealing with more complex, non-linear data patterns that linear models cannot effectively represent. 
+
+The selection between linear and non-linear regression hinges on the nature of the data and the complexity of the relationship between variables. While linear regression provides a clear interpretation of linear trends, non-linear regression accommodates more nuanced, intricate relationships.
+
+Both techniques possess their unique strengths and limitations. Linear regression is straightforward and computationally less demanding, whereas non-linear regression offers flexibility at the cost of potentially higher computational resources and the need to guard against overfitting.
+
+A comprehensive understanding of both linear and non-linear regression equips analysts and researchers with a versatile toolkit to effectively model relationships within diverse datasets. This proficiency aids in making accurate predictions and informed decisions across various domains, optimizing analyses for specific data complexities and objectives.
 

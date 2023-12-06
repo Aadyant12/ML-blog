@@ -290,7 +290,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 50 50  1.200262e+05</code></pre>
 </div>
 </div>
-<p>On fitting a linear model we get,</p>
+<p>On fitting both polynomial (degree = 3) and linear models we can see that the former performs much better.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> df)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
@@ -301,6 +301,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="index_files/figure-html/setup-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>Certainly! Here’s a slightly expanded conclusion:</p>
+<p>In summary, linear regression excels in capturing straightforward relationships between variables, offering simplicity and interpretability. Meanwhile, non-linear regression shines when dealing with more complex, non-linear data patterns that linear models cannot effectively represent.</p>
+<p>The selection between linear and non-linear regression hinges on the nature of the data and the complexity of the relationship between variables. While linear regression provides a clear interpretation of linear trends, non-linear regression accommodates more nuanced, intricate relationships.</p>
+<p>Both techniques possess their unique strengths and limitations. Linear regression is straightforward and computationally less demanding, whereas non-linear regression offers flexibility at the cost of potentially higher computational resources and the need to guard against overfitting.</p>
+<p>A comprehensive understanding of both linear and non-linear regression equips analysts and researchers with a versatile toolkit to effectively model relationships within diverse datasets. This proficiency aids in making accurate predictions and informed decisions across various domains, optimizing analyses for specific data complexities and objectives.</p>
 
 
 </section>

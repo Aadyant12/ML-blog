@@ -1,12 +1,56 @@
 ---
-title: "Welcome To My Blog"
-author: "Tristan O'Malley"
-date: "2023-12-02"
-categories: [news]
+title: "Regression"
+author: "Aadyant Khatri"
+date: "2023-12-05"
+categories: [classification, code, analysis, ML]
+image: "image.jpeg"
 ---
 
-This is the first post in a Quarto blog. Welcome!
+# Anomaly Detection
+In the realm of data analysis, anomalies and outliers serve as intriguing yet critical elements that deviate from the expected patterns within a dataset. Detecting these anomalies is pivotal in numerous fields, ranging from finance to healthcare, as they often signify important events, errors, or rare occurrences that demand attention and further exploration.
 
-![](thumbnail.jpg)
+Anomalies, also known as outliers, are data points or patterns that significantly differ from the majority of the dataset. They can manifest as sudden spikes, drops, or aberrations in the data and might represent errors, novelty, or genuinely unique occurrences.
 
-Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
+Identifying anomalies is crucial for various reasons. In finance, they might signal fraudulent activities or market irregularities. In healthcare, anomalies could represent rare diseases or unexpected patient conditions. Furthermore, anomalies might indicate faults in machinery in industrial settings or outliers in consumer behavior in marketing.
+
+## Methods for Anomaly Detection
+
+The dataset `mpg` from the `ggplot2` package will be used to illustrate the different approaches of outliers detection in R, and in particular we will focus on the variable hwy (highway miles per gallon).
+
+### Minimum and maximum
+
+The initial stage in identifying outliers within R involves commencing with descriptive statistics, specifically focusing on the lowest and highest values, also known as the minimum and maximum.
+
+In R, this can easily be done with the `summary()` function:
+```{r}
+library(ggplot2)
+dat <- ggplot2::mpg
+summary(dat$hwy)
+```
+This simple technique can readily identify obvious encoding errors, such as a human's weight listed as 786 kg (equivalent to 1733 pounds).
+
+### Histogram
+An alternative fundamental method for identifying outliers involves creating a histogram representing the data.
+```{r}
+hist(dat$hwy,
+  xlab = "hwy",
+  main = "Histogram of hwy",
+  breaks = sqrt(nrow(dat))
+)
+```
+According to the histogram, there are a few observations that stand out as they are taller than the rest (notably the bar located on the right-hand side of the chart).
+
+### Boxplot
+Boxplots are great for spotting anomalies. They show data distribution and outliers well, helping identify observations that fall far outside the expected range. Anomalies often lie far beyond the "whiskers" of the boxplot, making it easy to visually detect them in a dataset.
+
+```{r}
+ggplot(dat) +
+  aes(x = "", y = hwy) +
+  geom_boxplot(fill = "blue") +
+  theme_minimal()
+```
+A boxplot illustrates a quantitative variable by presenting five typical summary statistics (minimum, median, first and third quartiles, and maximum), along with any data points identified as possible outliers using the interquartile range (IQR) rule.
+
+Data points identified as potential outliers based on the IQR rule are represented as individual points in the boxplot. According to this criterion, there are two potential outliers, which are visible as the two points positioned above the upper end of the boxplot.
+
+

@@ -3,7 +3,7 @@ title: "Anomaly Detection"
 author: "Aadyant Khatri"
 date: "2023-12-05"
 categories: [outlier detection, code, analysis, ML]
-image: "image.jpeg"
+image: "image.jpg"
 ---
 
 # Anomaly Detection

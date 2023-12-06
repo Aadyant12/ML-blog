@@ -1,12 +1,18 @@
 ---
-title: "Welcome To My Blog"
-author: "Tristan O'Malley"
-date: "2023-12-02"
-categories: [news]
+title: "Classification"
+author: "Aadyant Khatri"
+date: "2023-12-05"
+categories: [classification, code, analysis, ML]
+image: "image.jpeg"
 ---
 
-This is the first post in a Quarto blog. Welcome!
+```{r}
+library(dplyr)
+library(class)
 
-![](thumbnail.jpg)
+next_sign <- readRDS("next_sing.rds")
+signs <- read.csv("knn_traffic_signs.csv", stringsAsFactors=FALSE)
+signs <- signs %>% 
+  select(-id, -sample)
+```
 
-Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.

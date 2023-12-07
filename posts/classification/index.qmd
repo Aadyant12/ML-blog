@@ -6,13 +6,147 @@ categories: [classification, code, analysis, ML]
 image: "image.jpeg"
 ---
 
-```{r}
-library(dplyr)
-library(class)
+# Classification
 
-next_sign <- readRDS("next_sing.rds")
-signs <- read.csv("knn_traffic_signs.csv", stringsAsFactors=FALSE)
-signs <- signs %>% 
-  select(-id, -sample)
+In the vast landscape of machine learning, classification stands tall as a fundamental and powerful technique. It's a predictive modeling method that allows algorithms to learn patterns from labeled data and categorize new, unseen data into predefined classes or categories. From spam email detection to medical diagnosis and sentiment analysis, classification algorithms play a pivotal role in numerous real-world applications.
+
+Classification is a supervised learning technique wherein the algorithm learns from labeled training data to predict the class or category of new, unseen instances. It involves assigning labels or categories to data points based on their features or attributes.
+
+## Types of Classification Algorithms
+
+Numerous algorithms cater to classification tasks, each with its strengths and suitability for different scenarios. Some of the widely used ones include:
+
+### Logistic Regression
+
+Logistic regression estimates the probability (ranging from 0 to 1) of an instance belonging to a specific class, unlike linear regression that predicts continuous values. Achieving this probability estimation involves using the logistic function (sigmoid function).
+
+To classify instances, logistic regression applies a threshold to these probability scores. For instance, if the probability exceeds 0.5, it assigns the instance to one class; otherwise, it assigns it to the other, establishing a decision boundary.
+
+In modeling the relationship between features and the logarithm of event odds, logistic regression assigns coefficients to each feature. These coefficients signify the impact of features on the outcome, aiding in understanding feature importance during classification.
+We'll utilize a dataset containing details about patients susceptible to or not susceptible to strokes. Specifically, we're employing the Stroke Prediction Dataset obtained from Kaggle to conduct predictions. Our objective involves analyzing the patient data within the training set to forecast whether a patient within the evaluation set is prone to experiencing a stroke or not.
+
+```{r}
+#| include: false
+library(tidyverse)
+library(caret)
+library(randomForest)
 ```
 
+```{r}
+df_stroke<-read.csv("healthcare-dataset-stroke-data.csv")
+glimpse(df_stroke)
+```
+
+Our data glimpse shows that we have 5110 observations and 12 variables.
+
+```{r}
+#| include: false
+library(tidymodels)
+library(gridExtra)
+library(e1071) 
+
+df_stroke = df_stroke[!df_stroke$gender == 'Other',]
+df_stroke$bmi[is.na(df_stroke$bmi)]<- mean(df_stroke$bmi,na.rm = TRUE)
+df_stroke$stroke<- factor(df_stroke$stroke, levels = c(0,1), labels = c("No", "Yes"))
+df_stroke$gender<-as.factor(df_stroke$gender)
+df_stroke$hypertension<- factor(df_stroke$hypertension, levels = c(0,1), labels = c("No", "Yes"))
+df_stroke$heart_disease<- factor(df_stroke$heart_disease, levels = c(0,1), labels = c("No", "Yes"))
+df_stroke$ever_married<-as.factor(df_stroke$ever_married)
+df_stroke$work_type<-as.factor(df_stroke$work_type)
+df_stroke$Residence_type<-as.factor(df_stroke$Residence_type)
+df_stroke$smoking_status<-as.factor(df_stroke$smoking_status)
+df_stroke$bmi<-as.numeric(df_stroke$bmi)
+```
+
+We can generate several bar graphs to visualize the connections between each of these factors and the target variable, which is the likelihood of a stroke occurrence in the individual.
+
+```{r}
+p1 <- ggplot(data = df_stroke) +geom_bar(mapping = aes(x = gender,fill=stroke))
+p2 <-ggplot(data = df_stroke) +geom_bar(mapping = aes(x = hypertension,fill=stroke))
+p3 <-ggplot(data = df_stroke) +geom_bar(mapping = aes(x = heart_disease,fill=stroke)) 
+p4 <-ggplot(data = df_stroke) +geom_bar(mapping = aes(x = ever_married,fill=stroke)) 
+grid.arrange(p1,p2,p3,p4 ,ncol= 2)
+
+p5 <- ggplot(data = df_stroke) +geom_bar(mapping = aes(x = work_type,fill=stroke))
+p6 <-ggplot(data = df_stroke) +geom_bar(mapping = aes(x = Residence_type,fill=stroke))
+p7 <-ggplot(data = df_stroke) +geom_bar(mapping = aes(x = smoking_status,fill=stroke)) 
+grid.arrange(p5,p6,p7 ,ncol= 1)
+```
+
+Now we prepare the training and test sets from the data.
+
+```{r}
+df_stroke <- na.omit(df_stroke)
+n_obs <- nrow(df_stroke)
+split <- round(n_obs * 0.7)
+train <- df_stroke[1:split,]
+# Create test
+test <- df_stroke[(split + 1):nrow(df_stroke),]
+```
+
+```{r}
+
+model <- logistic_reg(mixture = double(1), penalty = double(1)) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification") %>%
+  fit(stroke ~ ., data = train)
+
+#confusionMatrix(factor(as.list(predict(model, test, type = "class"))), factor(test$stroke))
+```
+
+
+### Decision Trees
+
+Decision trees in classification start by selecting the best attribute at each node to divide the data, using measures like Gini impurity or information gain. This recursive process continues until the data is segregated into distinct subsets or meets certain stopping conditions, such as a specified tree depth or a minimum number of samples in a node.
+
+In the classification process, new data instances navigate through the tree based on their attribute values. As they traverse the branches, they eventually arrive at a leaf node, where the decision tree assigns a predicted class label based on the attributes of the instance.
+
+One of the advantages of decision trees is their ability to handle both categorical and numerical data. For categorical attributes, decision trees consider all possible outcomes for splitting, while for numerical attributes, the trees choose specific thresholds to partition the data efficiently.
+
+### Random Forest
+
+An ensemble method comprising multiple decision trees, resulting in robust and accurate predictions.
+
+To set up the model, we call the randomForest classifier and point it to 'stroke' column for the outcome and provide the 'train' set as input.
+
+```{r}
+rf_model<-randomForest(formula= stroke~.,data = train)
+```
+
+After training the model using the training set, it's essential to assess its performance on comparable data. To achieve this, we'll utilize the test dataset. Let's display the confusion matrix to analyze how effectively our classification model worked when applied to the test data.
+
+```{r}
+confusionMatrix(predict(rf_model, test), test$stroke)
+
+```
+
+### Support Vector Machines (SVM)
+
+SVM operates by identifying the hyperplane that maximizes the margin, which is the distance between the hyperplane and the nearest data points of each class, also known as support vectors. This hyperplane, while linear in nature for the basic implementation, aims to create the largest separation between classes, providing robustness in classifying unseen data.
+
+In its standard form, SVM performs linear classification. However, by using kernel functions like polynomial, radial basis function (RBF), or sigmoid, SVMs can efficiently handle non-linear relationships by transforming the input data into higher-dimensional spaces where the classes become linearly separable.
+
+```{r}
+  
+classifier = svm(formula = stroke ~ ., 
+                 data = train, 
+                 type = 'C-classification', 
+                 kernel = 'linear') 
+
+confusionMatrix(predict(classifier, test), test$stroke)
+
+```
+
+### Neural Networks
+
+Neural networks process data using layers of neurons. The input layer receives data, hidden layers process information, and the output layer produces predictions.
+
+Activation functions add non-linearities to neurons, enabling the model to learn complex data patterns and relationships.
+
+Through training, neural networks adjust internal parameters (weights and biases) by comparing predicted outputs with actual labels using optimization algorithms like gradient descent.
+
+Deep neural networks, with multiple hidden layers, excel in capturing intricate data features and hierarchies, making them well-suited for handling complex classification tasks.
+
+## Conclusion
+
+In conclusion, machine learning classification offers diverse tools like SVM, Decision Trees, and Neural Networks, vital for informed decision-making across industries. Understanding these methods and their strengths is crucial for effective use. Challenges like overfitting and data imbalance require careful handling. Mastering these techniques empowers better insights, automation, and innovation in various domains, marking a fundamental aspect of data-driven problem-solving.

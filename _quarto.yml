@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Machine Learning Demystified"
+  title: "Home"
   navbar:
     right:
       - about.qmd
@@ -15,7 +15,7 @@ website:
         href: https://www.linkedin.com/in/aadyantk/
 format:
   html:
-    theme: lux
+    theme: minty
     css: styles.css
 
 editor: visual

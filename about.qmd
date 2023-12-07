@@ -4,16 +4,12 @@ image: profile.jpg
 about:
   template: jolla
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://www.linkedin.com/in/aadyantk/
     - icon: github
       text: Github
-      href: https://github.com
-
+      href: https://github.com/Aadyant12
 ---
 
-About this blog
+Welcome to "Machine Learning Demystified", your destination for demystifying Machine Learning. Authored by Aadyant Khatri, this blog aims to simplify ML concepts, share practical insights, and explore the latest trends in the field. Whether you're new to ML or a seasoned practitioner, join us on this journey to discover the power and applications of data-driven solutions.

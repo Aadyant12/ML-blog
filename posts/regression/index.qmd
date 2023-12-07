@@ -1,7 +1,7 @@
 ---
 title: "Regression"
 author: "Aadyant Khatri"
-date: "2023-12-05"
+date: "2023-11-28"
 categories: [regression, code, analysis, ML]
 image: "image.jpeg"
 ---
@@ -16,11 +16,9 @@ Simple linear regression involves one independent variable, while multiple linea
 
 To understand regression thoroughly we will use a data-driven approach that examines the height data from families to try to understand heredity.
 
-If we were to specify a linear model for this data, we would denote the $N$ observed father heights with $x_1, x_2, ....x_n$, then we model the $N$ son heights we are trying to predict with:
-$$Y_i = \beta_0 + \beta_1X_i + \epsilon_i, i = 1, 2, ....N.$$
-where $Y_i$ is the random son’s height that we want to predict.
+If we were to specify a linear model for this data, we would denote the $N$ observed father heights with $x_1, x_2, ....x_n$, then we model the $N$ son heights we are trying to predict with: $$Y_i = \beta_0 + \beta_1X_i + \epsilon_i, i = 1, 2, ....N.$$ where $Y_i$ is the random son's height that we want to predict.
 
-One reason why linear models are popular is their interpretability. Regarding the above data, we can explain the data as follows: due to inherited genes, a son's predicted height increases by $\beta_1$ for each additional inch in the father’s height, denoted by $x$. However, not all sons with fathers of the same height $x$ have identical heights. This disparity is accounted for by the term $\epsilon$, which represents the remaining variability. This variability encompasses factors like the mother’s genetic influence, environmental aspects, and other biological random variations.
+One reason why linear models are popular is their interpretability. Regarding the above data, we can explain the data as follows: due to inherited genes, a son's predicted height increases by $\beta_1$ for each additional inch in the father's height, denoted by $x$. However, not all sons with fathers of the same height $x$ have identical heights. This disparity is accounted for by the term $\epsilon$, which represents the remaining variability. This variability encompasses factors like the mother's genetic influence, environmental aspects, and other biological random variations.
 
 The way we formulated the model indicates that the intercept $\beta_0$ lacks interpretability because it represents the predicted height of a son with a father having zero height, which is not practically meaningful in this context.
 
@@ -53,6 +51,7 @@ galton_heights <- GaltonFamilies |>
 fit <- lm(son ~ father, data = galton_heights)
 fit$coef
 ```
+
 On visualizing the heights of the fathers and their sons as well as the best linear fitting model, we can say that linear regressor has worked fine.
 
 ```{r}
@@ -60,7 +59,6 @@ galton_heights |> ggplot(aes(son, father)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x)
 ```
-
 
 # Non - Linear Regression
 
@@ -70,11 +68,7 @@ Understanding when to opt for non-linear regression is pivotal. Many natural pro
 
 Non-linear regression encompasses a wide spectrum of models. These include polynomial, exponential, logarithmic, power-law, sigmoidal, and many other complex functions. Each model is tailored to suit specific data behaviors, aiming to accurately capture and predict relationships that linear models cannot effectively represent.
 
-For example, let's create a custom data where 
-$$x = 1, 2, ....50$$
-and
-$$ y = x^3 - 2x^2 + x + 2 + \epsilon$$
-where $\epsilon$ denotes random noise.
+For example, let's create a custom data where $$x = 1, 2, ....50$$ and $$ y = x^3 - 2x^2 + x + 2 + \epsilon$$ where $\epsilon$ denotes random noise.
 
 ```{r}
 x <- 1:50
@@ -82,7 +76,9 @@ y <- x^3 - 2 * x^2 + x + 2 + rnorm(10, 0, 10)
 df <- data.frame(x, y)
 df
 ```
-On fitting both polynomial (degree = 3) and linear models we can see that the former performs much better. 
+
+On fitting both polynomial (degree = 3) and linear models we can see that the former performs much better.
+
 ```{r setup, warning=FALSE}
 fit <- lm(y ~ x, data = df)
 df |> ggplot(aes(x, y)) +
@@ -94,11 +90,10 @@ df |> ggplot(aes(x, y)) +
 
 # Conclusion
 
-In summary, linear regression excels in capturing straightforward relationships between variables, offering simplicity and interpretability. Meanwhile, non-linear regression shines when dealing with more complex, non-linear data patterns that linear models cannot effectively represent. 
+In summary, linear regression excels in capturing straightforward relationships between variables, offering simplicity and interpretability. Meanwhile, non-linear regression shines when dealing with more complex, non-linear data patterns that linear models cannot effectively represent.
 
 The selection between linear and non-linear regression hinges on the nature of the data and the complexity of the relationship between variables. While linear regression provides a clear interpretation of linear trends, non-linear regression accommodates more nuanced, intricate relationships.
 
 Both techniques possess their unique strengths and limitations. Linear regression is straightforward and computationally less demanding, whereas non-linear regression offers flexibility at the cost of potentially higher computational resources and the need to guard against overfitting.
 
 A comprehensive understanding of both linear and non-linear regression equips analysts and researchers with a versatile toolkit to effectively model relationships within diverse datasets. This proficiency aids in making accurate predictions and informed decisions across various domains, optimizing analyses for specific data complexities and objectives.
-

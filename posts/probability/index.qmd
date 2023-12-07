@@ -1,7 +1,7 @@
 ---
 title: "Probability Theory and Random Variables"
 author: "Aadyant Khatri"
-date: "2023-12-05"
+date: "2023-11-15"
 categories: [probability, code, analysis]
 image: "image.jpg"
 ---
@@ -68,7 +68,7 @@ When events are not independent, conditional probabilities are useful. We saw an
 Pr(Card 2 is a king ∣ Card 1 is a king ) = 3/51
 ```
 
-We use the ```|``` as shorthand for "given that".
+We use the `|` as shorthand for "given that".
 
 When two events, say are independent, we have:
 
@@ -79,19 +79,25 @@ Pr(A | B) = Pr(A)
 In mathematical terms, this means that the occurrence of event `B` has no bearing on the probability of event `A` happening.
 
 ## Arithmetic rules
+
 ### Addition rule
+
 The addition rule tells us that:
-```
+
+```         
 Pr(A or B) = Pr(A) + Pr(B) - Pr(A and B)
 ```
 
 This rule is easy to understand if you visualize a Venn diagram. When we add probabilities directly, we're counting the overlapping part twice, thus necessitating the subtraction of one instance to correct for the duplication.
 
 ### Multiplication rule
+
 If we seek to determine the likelihood of two events, for instance, A and B, happening simultaneously, we can apply the multiplication rule:
-```
+
+```         
 Pr(A and B) = Pr(A) * Pr(B|A)
 ```
+
 Suppose you have a bag with 4 red balls and 6 blue balls. You draw one ball, note its color, and without replacing it, draw another ball. Let's calculate the probability of drawing a red ball followed by drawing another red ball:
 
 First Event: Probability of drawing a red ball = Number of red balls / Total number of balls = 4 / 10 = 2/5.
@@ -100,18 +106,17 @@ Second Event: If the first ball drawn was red (which has happened with a probabi
 
 Now, according to the multiplication rule, the overall probability of both events happening (drawing two red balls consecutively) is found by multiplying the probabilities of the individual events:
 
-Probability of drawing two red balls = Probability of the first red ball * Probability of the second red ball given the first was red
-= (2/5) * (1/3)
-= 2/15.
+Probability of drawing two red balls = Probability of the first red ball \* Probability of the second red ball given the first was red = (2/5) \* (1/3) = 2/15.
 
 So, the probability of drawing two red balls consecutively, considering the dependency, is 2/15.
 
 ## Example
+
 Now let's discuss one very prominent problems in probability theory: **Birthday problem**
 
 Let's consider a scenario in a classroom containing 50 individuals. If we assume these 50 people were selected randomly, what is the probability that at least two individuals share the same birthday? To determine this probability, we'll employ a Monte Carlo simulation. For the sake of simplicity, we disregard individuals born on February 29, as this adjustment doesn't significantly alter the outcome.
 
-Initially, consider that birthdays can be depicted as values ranging from 1 to 365. Therefore, a collection of 50 birthdays can be acquired in the following manner. To verify whether there are at least two individuals with the same birthday within this specific group of 50 people, we can utilize the `duplicated` function. This function identifies duplicates within a vector and returns `TRUE` if any element is a duplicate. 
+Initially, consider that birthdays can be depicted as values ranging from 1 to 365. Therefore, a collection of 50 birthdays can be acquired in the following manner. To verify whether there are at least two individuals with the same birthday within this specific group of 50 people, we can utilize the `duplicated` function. This function identifies duplicates within a vector and returns `TRUE` if any element is a duplicate.
 
 ```{r}
 n <- 50
@@ -120,11 +125,13 @@ duplicated(c(1,2,3,1,4,3,5))
 ```
 
 To check if two birthdays match, we can easily employ the `any` and `duplicated` functions in this manner:
+
 ```{r}
 any(duplicated(bdays))
 ```
 
 To estimate the probability of having a common birthday within a group, we conduct multiple trials by selecting groups of 50 birthdays repeatedly.
+
 ```{r}
 B <- 10000
 same_birthday <- function(n){
@@ -134,11 +141,14 @@ same_birthday <- function(n){
 results <- replicate(B, same_birthday(50))
 mean(results)
 ```
+
 We can quickly create a function to compute this for any group size. By utilizing the `sapply` function, we can execute operations on individual elements using any specified function. Now, we're able to create a graph illustrating the estimated probabilities of two individuals sharing a birthday within a gathering of size `n`.
+
 ```{r}
 #| include: false
 library(tidyverse)
 ```
+
 ```{r}
 compute_prob <- function(n, B=10000){
   results <- replicate(B, same_birthday(n))
@@ -157,6 +167,7 @@ Let's calculate precise probabilities instead of relying on Monte Carlo estimati
 First, considering the initial person, the likelihood of them having a distinct birthday is 1. Following this, the probability that the second person possesses a unique birthday, given that the first person has already selected one, is 364 out of 365. Subsequently, provided the first two individuals have distinct birthdays, the third person is left with 363 days to choose from. Continuing this pattern, the probability of all 50 people having different birthdays is then determined. Then the multiplication rule can be applied to find the probability of having a clash of birthdays.
 
 The code can be written for `n` number of people:
+
 ```{r}
 exact_prob <- function(n){
   prob_unique <- seq(365,365-n+1)/365 
@@ -178,6 +189,7 @@ X <- ifelse(sample(beads, 1) == "blue", 1, 0)
 ```
 
 In this context, X represents a random variable where the outcome alters randomly each time we pick a new bead. See the example provided below:
+
 ```{r}
 ifelse(sample(beads, 1) == "blue", 1, 0)
 ifelse(sample(beads, 1) == "blue", 1, 0)
@@ -188,36 +200,31 @@ ifelse(sample(beads, 1) == "blue", 1, 0)
 
 The probability distribution of a random variable describes the likelihood of different outcomes or values that the variable can take on, along with their associated probabilities. It provides a comprehensive overview of the probabilities associated with each possible value of the random variable. More specifically, the probability distribution of a random variable, say S, tells us the probability of the observed value falling at any given interval.
 
-If we can define a cumulative distribution function $F(a) = Pr(S \le a)$, then we will be able to answer any question related to the probability of events defined by our random variable `S`. We call this `F` the random variable’s distribution function.
+If we can define a cumulative distribution function $F(a) = Pr(S \le a)$, then we will be able to answer any question related to the probability of events defined by our random variable `S`. We call this `F` the random variable's distribution function.
 
 We can approximate the distribution function of the random variable by employing a Monte Carlo simulation, generating numerous instances of the random variable.
 
 ## Expected value and standard error
-It is common to use letter `E` like this:
-$$
+
+It is common to use letter `E` like this: $$
 E[X]
-$$
-to denote the expected value of the random variable `X`.
+$$ to denote the expected value of the random variable `X`.
 
 A random variable fluctuates around its expected value, and with numerous iterations, the average of these iterations converges toward the expected value, becoming more precise with increased iterations.
 
 Theoretical statistics offers methods to compute expected values in various scenarios. For instance, a valuable formula indicates that the expected value of a random variable based on a single draw is the average of the numbers within the container or set.
 
-In general, if an urn has two possible outcomes, say `a` and `b`, with proportions `p` and `(1-p)` respectively, the average is:
-$$
+In general, if an urn has two possible outcomes, say `a` and `b`, with proportions `p` and `(1-p)` respectively, the average is: $$
 E[X] = ap + b(1-p)
 $$
 
-The **standard error** (SE) provides insight into the extent of variability around the expected value. In statistical literature, it's typical to represent the standard error of a random variable as 
-$$
+The **standard error** (SE) provides insight into the extent of variability around the expected value. In statistical literature, it's typical to represent the standard error of a random variable as $$
 SE[X]
 $$
 
-In general, if an urn has two possible outcomes, say `a` and `b`, with proportions `p` and `(1-p)` respectively, the average is:
-$$
+In general, if an urn has two possible outcomes, say `a` and `b`, with proportions `p` and `(1-p)` respectively, the average is: $$
 SE[X] = |b-a|\sqrt{p(1-p)}
-$$
-## Central Limit Theorem
+$$ \## Central Limit Theorem
 
 The Central Limit Theorem (CLT) states that when the number of draws, known as the sample size, is sufficiently large, the probability distribution of the sum of independent draws tends to be close to a normal distribution. As sampling models are utilized across numerous data generation procedures, the CLT is widely regarded as one of the most significant and influential mathematical concepts in history.
 
